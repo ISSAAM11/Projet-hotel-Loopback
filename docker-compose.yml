@@ -1,0 +1,19 @@
+version: '3'
+services:
+    middle_mongo:
+        image: mongo:latest
+        env_file:
+            - ./middle_example/.env
+        ports:
+            - 27017:27017
+        volumes:
+            - ./middle_example/mongo/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+            - ./data/db:/data/db
+
+    #rest-api:
+    #   build: ./middle_example
+    #  ports:
+    #     - 3000:3000
+    #environment:
+    #   - WEB_HOST=web-app
+    #  - WEB_PORT=5000
