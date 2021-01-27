@@ -15,7 +15,7 @@ require('dotenv').config();
 const config = {
   name: 'mongo',
   connector: 'mongodb',
-  url: `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@127.0.0.1:27017/test_db`,
+  url: `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@middle_mongo:27017/test_db`,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
