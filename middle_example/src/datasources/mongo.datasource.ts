@@ -1,9 +1,21 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
+require('dotenv').config();
+
+/*const config = {
+  name: 'mongo',
+  connector: 'mongodb',
+  url: '',
+  host: 'middle_mongo',
+  port: 27017,
+  user: 'middle_mongo_test_user',
+  password: 'mongotest',
+  database: 'test_db',
+};*/
 const config = {
   name: 'mongo',
   connector: 'mongodb',
-  url: `mongodb://middle_mongo_test_user:mongotest@localhost:27017/test_db`,
+  url: `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@127.0.0.1:27017/test_db`,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };

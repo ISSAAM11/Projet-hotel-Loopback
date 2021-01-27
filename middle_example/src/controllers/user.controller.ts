@@ -1,160 +1,246 @@
-// Copyright IBM Corp. 2020. All Rights Reserved.
-// Node module: @loopback/example-todo-jwt
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
-
-import {authenticate, TokenService} from '@loopback/authentication';
+import {AuthenticationBindings, authenticate} from '@loopback/authentication';
+import {Getter, inject} from '@loopback/core';
 import {
-  Credentials,
-  MyUserService,
-  TokenServiceBindings,
-  User,
-  UserRepository,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
-import {model, property, repository} from '@loopback/repository';
+  Count,
+  CountSchema,
+  Filter,
+  FilterExcludingWhere,
+  repository,
+  Where,
+} from '@loopback/repository';
 import {
+  post,
+  param,
   get,
   getModelSchemaRef,
-  post,
+  patch,
+  put,
+  del,
   requestBody,
-  SchemaObject,
+  response,
+  HttpErrors,
 } from '@loopback/rest';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {genSalt, hash} from 'bcryptjs';
-import _ from 'lodash';
+import {
+  PasswordHasherBindings,
+  MyAuthBindings,
+  PasswordHasher,
+  CredentialsRequestBody,
+  JWTService,
+  Credential,
+  MyUserProfile,
+  Role,
+  UserProfileSchema,
+  NewCredentialsRequestBody,
+  NewCredential,
+} from '../authorization';
+/*import {MyAuthBindings, PasswordHasherBindings} from '../authorization/keys';
+import {Role} from '../authorization/role';
+import {PasswordHasher} from '../authorization/services/hash.password.bcryptjs';
+import {JWTService} from '../authorization/services/JWT.services';
+import {
+  MyUserProfile,
+  Credential,
+  CredentialsRequestBody,
+} from '../authorization/types';*/
+import {User} from '../models/user.model';
+import {UserRepository} from '../repositories/user.repository';
 
-@model()
-export class NewUserRequest extends User {
-  @property({
-    type: 'string',
-    required: true,
-  })
-  password: string;
-}
-
-const CredentialsSchema: SchemaObject = {
-  type: 'object',
-  required: ['email', 'password'],
-  properties: {
-    email: {
-      type: 'string',
-      format: 'email',
-    },
-    password: {
-      type: 'string',
-      minLength: 8,
-    },
-  },
-};
-
-export const CredentialsRequestBody = {
-  description: 'The input of login function',
-  required: true,
-  content: {
-    'application/json': {schema: CredentialsSchema},
-  },
-};
+//import { CredentialsRequestBody } from './user.controller';
 
 export class UserController {
   constructor(
-    @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: TokenService,
-    @inject(UserServiceBindings.USER_SERVICE)
-    public userService: MyUserService,
-    @inject(SecurityBindings.USER, {optional: true})
-    public user: UserProfile,
-    @repository(UserRepository) protected userRepository: UserRepository,
+    @repository(UserRepository)
+    public userRepository: UserRepository,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public passwordHasher: PasswordHasher,
+    @inject(MyAuthBindings.TOKEN_SERVICE)
+    public jwtService: JWTService,
+    @inject.getter(AuthenticationBindings.CURRENT_USER)
+    public getCurrentUser: Getter<MyUserProfile>,
   ) {}
+
+  @post('/users', {
+    responses: {
+      '200': {
+        description: 'User model instance',
+        content: {'application/json': {schema: getModelSchemaRef(User)}},
+      },
+    },
+  })
+  async create(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {
+            title: 'NewUser',
+            exclude: ['id'],
+          }),
+        },
+      },
+    })
+    user: Omit<User, 'id'>,
+  ): Promise<User> {
+    if (await this.userRepository.findOne({where: {email: user.email}})) {
+      throw new HttpErrors.BadRequest(`This email already exists`);
+    } else {
+      user.password = await this.passwordHasher.hashPassword(
+        user.password || '',
+      );
+      const newUser = await this.userRepository.create(user);
+      delete newUser.password;
+      return newUser;
+    }
+  }
 
   @post('/users/login', {
     responses: {
       '200': {
         description: 'Token',
         content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                token: {
-                  type: 'string',
-                },
-              },
-            },
-          },
+          'application/json': {},
         },
       },
     },
   })
   async login(
-    @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
-    // ensure the user exists, and the password is correct
-    const user = await this.userService.verifyCredentials(credentials);
-    // convert a User object into a UserProfile object (reduced set of properties)
-    const userProfile = this.userService.convertToUserProfile(user);
-
-    // create a JSON Web Token based on the user profile
-    const token = await this.jwtService.generateToken(userProfile);
-    return {token};
-  }
-
-  @authenticate('jwt')
-  @get('/whoAmI', {
-    responses: {
-      '200': {
-        description: 'Return current user',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'string',
-            },
-          },
-        },
-      },
-    },
-  })
-  async whoAmI(
-    @inject(SecurityBindings.USER)
-    currentUserProfile: UserProfile,
-  ): Promise<string> {
-    return currentUserProfile[securityId];
-  }
-
-  @post('/signup', {
-    responses: {
-      '200': {
-        description: 'User',
-        content: {
-          'application/json': {
-            schema: {
-              'x-ts-type': User,
-            },
-          },
-        },
-      },
-    },
-  })
-  async signUp(
     @requestBody({
+      description: 'The input of login function',
+      required: true,
       content: {
         'application/json': {
-          schema: getModelSchemaRef(NewUserRequest, {
-            title: 'NewUser',
-          }),
+          schema: {
+            type: 'object',
+            required: ['email', 'password'],
+            properties: {
+              email: {
+                type: 'string',
+                format: 'email',
+              },
+              password: {
+                type: 'string',
+                minLength: 8,
+              },
+            },
+          },
         },
       },
     })
-    newUserRequest: NewUserRequest,
+    credential: Credential,
+  ): Promise<{
+    token: string;
+    username: string;
+    email: string;
+    role: Role;
+    id: string;
+  }> {
+    const user = await this.jwtService.verifyCredential(credential);
+    const token = await this.jwtService.generateToken({
+      role: user.role,
+      id: user.id,
+    } as MyUserProfile);
+    return {
+      token,
+      username: user.username!!,
+      email: user.email!!,
+      role: user.role!!,
+      id: user.id,
+    };
+  }
+
+  @get('/users/count')
+  @response(200, {
+    description: 'User model count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async count(@param.where(User) where?: Where<User>): Promise<Count> {
+    return this.userRepository.count(where);
+  }
+
+  @get('/users')
+  @response(200, {
+    description: 'Array of User model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(User, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(@param.filter(User) filter?: Filter<User>): Promise<User[]> {
+    return this.userRepository.find(filter);
+  }
+
+  @patch('/users')
+  @response(200, {
+    description: 'User PATCH success count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async updateAll(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {partial: true}),
+        },
+      },
+    })
+    user: User,
+    @param.where(User) where?: Where<User>,
+  ): Promise<Count> {
+    return this.userRepository.updateAll(user, where);
+  }
+
+  @get('/users/{id}')
+  @response(200, {
+    description: 'User model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(User, {includeRelations: true}),
+      },
+    },
+  })
+  async findById(
+    @param.path.string('id') id: string,
+    @param.filter(User, {exclude: 'where'}) filter?: FilterExcludingWhere<User>,
   ): Promise<User> {
-    const password = await hash(newUserRequest.password, await genSalt());
-    const savedUser = await this.userRepository.create(
-      _.omit(newUserRequest, 'password'),
-    );
+    return this.userRepository.findById(id, filter);
+  }
 
-    await this.userRepository.userCredentials(savedUser.id).create({password});
+  @patch('/users/{id}')
+  @response(204, {
+    description: 'User PATCH success',
+  })
+  async updateById(
+    @param.path.number('id') id: string,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {partial: true}),
+        },
+      },
+    })
+    user: User,
+  ): Promise<void> {
+    await this.userRepository.updateById(id, user);
+  }
 
-    return savedUser;
+  @put('/users/{id}')
+  @response(204, {
+    description: 'User PUT success',
+  })
+  async replaceById(
+    @param.path.string('id') id: string,
+    @requestBody() user: User,
+  ): Promise<void> {
+    await this.userRepository.replaceById(id, user);
+  }
+
+  @del('/users/{id}')
+  @response(204, {
+    description: 'User DELETE success',
+  })
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
+    await this.userRepository.deleteById(id);
   }
 }

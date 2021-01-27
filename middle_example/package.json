@@ -33,7 +33,7 @@
     "openapi-spec": "node ./dist/openapi-spec",
     "rebuild": "npm run clean && npm run build",
     "prestart": "npm run rebuild",
-    "start": "node -r source-map-support/register .",
+    "start": "node -r dotenv/config -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache"
   },
   "repository": {
@@ -57,6 +57,7 @@
     "@loopback/rest": "^9.1.2",
     "@loopback/rest-explorer": "^3.0.6",
     "@loopback/service-proxy": "^3.0.6",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "loopback-connector-mongodb": "^5.5.0",
     "tslib": "^2.0.0"
