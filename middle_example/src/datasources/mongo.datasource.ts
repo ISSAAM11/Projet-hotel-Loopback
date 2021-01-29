@@ -2,16 +2,6 @@ import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 require('dotenv').config();
 
-/*const config = {
-  name: 'mongo',
-  connector: 'mongodb',
-  url: '',
-  host: 'middle_mongo',
-  port: 27017,
-  user: 'middle_mongo_test_user',
-  password: 'mongotest',
-  database: 'test_db',
-};*/
 const config = {
   name: 'mongo',
   connector: 'mongodb',
@@ -19,12 +9,6 @@ const config = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
-/*const config = {
-  name: 'mongo',
-  connector: 'memory',
-  localStorage: '',
-  file: ''
-};*/
 
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down

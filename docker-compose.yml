@@ -1,7 +1,7 @@
 version: '3'
 services:
     middle_mongo:
-        image: mongo:latest
+        image: mongo
         env_file:
             - ./middle_example/.env
         ports:

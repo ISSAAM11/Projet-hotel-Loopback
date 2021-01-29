@@ -58,7 +58,8 @@ export class UserController {
     @inject.getter(AuthenticationBindings.CURRENT_USER)
     public getCurrentUser: Getter<MyUserProfile>,
   ) {}
-
+  
+  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @post('/users', {
     responses: {
       '200': {
@@ -147,6 +148,7 @@ export class UserController {
     };
   }
 
+  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @get('/users/count')
   @response(200, {
     description: 'User model count',
@@ -156,6 +158,7 @@ export class UserController {
     return this.userRepository.count(where);
   }
 
+  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @get('/users')
   @response(200, {
     description: 'Array of User model instances',
@@ -172,6 +175,7 @@ export class UserController {
     return this.userRepository.find(filter);
   }
 
+  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @patch('/users')
   @response(200, {
     description: 'User PATCH success count',
@@ -191,6 +195,7 @@ export class UserController {
     return this.userRepository.updateAll(user, where);
   }
 
+  
   @get('/users/{id}')
   @response(200, {
     description: 'User model instance',
@@ -236,6 +241,7 @@ export class UserController {
     await this.userRepository.replaceById(id, user);
   }
 
+  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @del('/users/{id}')
   @response(204, {
     description: 'User DELETE success',
