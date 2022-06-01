@@ -1,4 +1,4 @@
-import {AuthenticationBindings, authenticate} from '@loopback/authentication';
+import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {Getter, inject} from '@loopback/core';
 import {
   Count,
@@ -6,32 +6,15 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
-  HttpErrors,
+  del, get,
+  getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {
-  PasswordHasherBindings,
-  MyAuthBindings,
-  PasswordHasher,
-  CredentialsRequestBody,
-  JWTService,
-  Credential,
-  MyUserProfile,
-  Role,
-  UserProfileSchema,
-  NewCredentialsRequestBody,
-  NewCredential,
+  Credential, JWTService, MyAuthBindings, MyUserProfile, PasswordHasher, PasswordHasherBindings, Role
 } from '../authorization';
 /*import {MyAuthBindings, PasswordHasherBindings} from '../authorization/keys';
 import {Role} from '../authorization/role';
@@ -57,9 +40,9 @@ export class UserController {
     public jwtService: JWTService,
     @inject.getter(AuthenticationBindings.CURRENT_USER)
     public getCurrentUser: Getter<MyUserProfile>,
-  ) {}
-  
- // @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
+  ) { }
+
+  // @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @post('/users', {
     responses: {
       '200': {
@@ -132,7 +115,6 @@ export class UserController {
     username: string;
     email: string;
     role: Role;
-    id: string;
   }> {
     const user = await this.jwtService.verifyCredential(credential);
     const token = await this.jwtService.generateToken({
@@ -144,7 +126,6 @@ export class UserController {
       username: user.username!!,
       email: user.email!!,
       role: user.role!!,
-      id: user.id,
     };
   }
 
@@ -195,7 +176,7 @@ export class UserController {
     return this.userRepository.updateAll(user, where);
   }
 
-  
+
   @get('/users/{id}')
   @response(200, {
     description: 'User model instance',

@@ -1,14 +1,17 @@
 import {Entity, model, property} from '@loopback/repository';
 
+const {v4: uuidv4} = require('uuid');
+
 @model({settings: {hidden: ['password', 'tokenRefreshedAt']}})
+
 export class User extends Entity {
   @property({
     type: 'string',
     id: true,
+    default: () => uuidv4(),
 
-    generated: true,
   })
-  id: string;
+  id?: string;
 
   @property({
     type: 'string',

@@ -1,11 +1,12 @@
 import {Entity, model, property} from '@loopback/repository';
+const {v4: uuidv4} = require('uuid');
 
 @model()
 export class Hotel extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    default: () => uuidv4(),
   })
   id?: string;
 
