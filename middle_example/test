@@ -1,0 +1,10 @@
+{
+  "ids": {
+    "User": 2
+  },
+  "models": {
+    "User": {
+      "1": "{\"username\":\"test\",\"password\":\"$2a$10$AFokxkDP/u7x74JfAviydeo3hdjIL8rjHumK/7eJQrVfZlUMNm4jy\",\"email\":\"user@example.com\",\"tokenRefreshedAt\":0,\"role\":0,\"id\":\"1\"}"
+    }
+  }
+}

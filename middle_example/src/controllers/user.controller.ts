@@ -59,7 +59,7 @@ export class UserController {
     public getCurrentUser: Getter<MyUserProfile>,
   ) {}
   
-  @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
+ // @authenticate({strategy: 'jwt', options: {option1: Role.Admin}})
   @post('/users', {
     responses: {
       '200': {

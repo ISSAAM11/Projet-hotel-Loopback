@@ -1,6 +1,5 @@
 import {ApplicationConfig} from '@loopback/core';
 import {Middle} from './application';
-
 /**
  * Export the OpenAPI spec from the application
  */

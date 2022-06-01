@@ -15,7 +15,7 @@ import {
   JWTAuthenticationComponent,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
-import {MongoDataSource} from './datasources';
+import {DbHotelDataSource} from './datasources';
 import { JWTService } from './authorization/services/JWT.services';
 import { MyAuthBindings, PasswordHasherBindings } from './authorization/keys';
 import { BcryptHasher } from './authorization/services/hash.password.bcryptjs';
@@ -34,7 +34,7 @@ export class Middle extends BootMixin(
     // Mount jwt component
     this.component(JWTAuthenticationComponent);
     // Bind datasource
-    this.dataSource(MongoDataSource, UserServiceBindings.DATASOURCE_NAME);
+    this.dataSource(DbHotelDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     // Set up the custom sequence
     this.sequence(MySequence);

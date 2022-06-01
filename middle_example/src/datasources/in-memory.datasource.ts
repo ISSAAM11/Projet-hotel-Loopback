@@ -1,13 +1,11 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
-require('dotenv').config();
 
 const config = {
-  name: 'mongo',
-  connector: 'mongodb',
-  url: `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@middle_mongo:27017/test_db`,
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  name: 'in_memory',
+  connector: 'memory',
+  localStorage: 'test',
+  file: 'test'
 };
 
 // Observe application's life cycle to disconnect the datasource when
@@ -15,14 +13,13 @@ const config = {
 // gracefully. The `stop()` method is inherited from `juggler.DataSource`.
 // Learn more at https://loopback.io/doc/en/lb4/Life-cycle.html
 @lifeCycleObserver('datasource')
-export class MongoDataSource
-  extends juggler.DataSource
+export class InMemoryDataSource extends juggler.DataSource
   implements LifeCycleObserver {
-  static dataSourceName = 'mongo';
+  static dataSourceName = 'in_memory';
   static readonly defaultConfig = config;
 
   constructor(
-    @inject('datasources.config.mongo', {optional: true})
+    @inject('datasources.config.in_memory', {optional: true})
     dsConfig: object = config,
   ) {
     super(dsConfig);
