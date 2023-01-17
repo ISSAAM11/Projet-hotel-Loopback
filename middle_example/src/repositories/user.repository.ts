@@ -9,7 +9,7 @@ export class UserRepository extends DefaultCrudRepository<
   UserRelations
 > {
   constructor(
-    @inject('datasources.db_hotel') dataSource: DbHotelDataSource,
+    @inject('datasources.hotel_database') dataSource: DbHotelDataSource,
   ) {
     super(User, dataSource);
   }

@@ -17,27 +17,26 @@ export class Hotel extends Entity {
   name: string;
 
   @property({
-    type: 'date',
+    type: 'number',
+  })
+  contact?: string;
+
+  @property({
+    type: 'string',
   })
   date?: string;
 
   @property({
-    type: 'string',
+    type: 'any',
     required: true,
   })
-  lock_supplier: string;
+  lockSupplier: any;
 
   @property({
     type: 'boolean',
     default: 0,
   })
   general_card?: boolean;
-
-  @property({
-    type: 'number',
-    default: 0,
-  })
-  device_ammount?: number;
 
   @property({
     type: 'boolean',
@@ -102,16 +101,13 @@ export class Hotel extends Entity {
   @property({
     type: 'string',
   })
-  adress?: string;
-
-  @property({
-    type: 'string',
-  })
   admin_name?: string;
 
   @property({
     type: 'string',
-    required: true,
+    jsonSchema: {
+      format: 'email',
+    },
   })
   account: string;
 
@@ -122,11 +118,92 @@ export class Hotel extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+  })
+  country?: string;
+
+  @property({
+    type: 'string',
+  })
+  Region?: string;
+
+  @property({
+    type: 'string',
+  })
+  adress?: string;
+
+  @property({
+    type: 'string',
   })
   Role: string;
 
+  @property({
+    type: 'string',
+    
+  })
+  phone: string;
 
+  @property({
+    type: 'boolean',
+  })
+  enable: boolean;
+
+  @property({
+    type: 'boolean',
+    default:0
+  })
+  history: boolean;
+  
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  lockAmmount?: number;
+
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  gatewayAmmount?: number;
+
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  liftAmmount?: number;
+
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  energyAmmount?: number;
+
+  @property({
+    type: 'string',
+    default: 0,
+  })
+  reason?: string;   
+  
+  @property({
+    type: 'string',
+    default: 0,
+  })
+  deleteDate?: string; 
+
+  @property({
+    type: 'string',
+    default: 0,
+  })
+  idCreateur?: string; 
+  
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: []
+  })  
+  purchaseOrder: string[];
+  
+
+  
   constructor(data?: Partial<Hotel>) {
     super(data);
   }

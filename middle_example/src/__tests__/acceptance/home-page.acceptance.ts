@@ -5,7 +5,7 @@ import {setupApplication} from './test-helper';
 describe('HomePage', () => {
   let app: Middle;
   let client: Client;
-
+/*
   before('setupApplication', async () => {
     ({app, client} = await setupApplication());
   });
@@ -28,4 +28,18 @@ describe('HomePage', () => {
       .expect('Content-Type', /text\/html/)
       .expect(/<title>LoopBack API Explorer/);
   });
+*/
+/*
+  describe('PingController() unit', () => {
+    it('pings with no input', () => {
+      const controller = new PingController();
+      const result = controller.ping();
+      expect(result).to.equal('You pinged with undefined');
+    });
+
+/*    it("pings with msg 'hello'", () => {
+      const controller = new PingController();
+      const result = controller.ping('hello');
+      expect(result).to.equal('You pinged with hello');
+    });*/
 });

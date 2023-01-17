@@ -9,9 +9,13 @@ export class User extends Entity {
     type: 'string',
     id: true,
     default: () => uuidv4(),
-
   })
   id?: string;
+
+  @property({
+    type: 'string',
+  })
+  lockSupplier?: string;
 
   @property({
     type: 'string',
@@ -21,13 +25,21 @@ export class User extends Entity {
 
   @property({
     type: 'string',
-    required: true,
   })
   password?: string;
 
   @property({
     type: 'string',
-    required: true,
+  })
+  imageURL?: string;
+
+  @property({
+    type: 'string',
+  })
+  contact?: string;
+
+  @property({
+    type: 'string',
     jsonSchema: {
       format: 'email',
     },
@@ -36,19 +48,89 @@ export class User extends Entity {
     },
   })
   email?: string;
+
   @property({
     type: 'number',
   })
   tokenRefreshedAt: number;
+  
   @property({
     type: 'number',
-    required: true,
+    default : 2
   })
   role?: number;
+
+  @property({
+    type: 'string',
+    default : ""
+  })
+  telephone?: string;
+
+  @property({
+    type: 'string',
+  })
+  date?: string;
+
+  @property({
+    type: 'number',
+    default: 0
+  })
+  hotelNumber?: number;
+
+  @property({
+    type: 'string',
+  })
+  subDistributor?: string;
+
+  @property({
+    type: 'boolean',
+    default: true
+  })
+  enable?: boolean;
+
+  @property({
+    type: 'string',
+    default: ""
+  })
+  idHotel?: string;
+
+  @property({
+    type: "string",
+  })
+  resetKey?: string
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: []
+  })  
+  myDistributorlist: string[];
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: []
+  })  
+  myHotelslist: string[];
+  
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: []
+  })  
+  myProductlist: string[];
+  
+  @property({
+    type: 'array',
+    itemType: 'string',
+    default: []
+  })  
+  myPurchaseOrderlist: string[];
 
   constructor(data?: Partial<User>) {
     super(data);
   }
+  
 }
 
 export interface UserRelations {

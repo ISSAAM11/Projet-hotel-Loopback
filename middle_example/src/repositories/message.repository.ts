@@ -1,16 +1,16 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
 import {DbHotelDataSource} from '../datasources';
-import {Hotel, HotelRelations} from '../models';
+import {Message, MessageRelations} from '../models';
 
-export class HotelRepository extends DefaultCrudRepository<
-  Hotel,
-  typeof Hotel.prototype.id,
-  HotelRelations
+export class MessageRepository extends DefaultCrudRepository<
+  Message,
+  typeof Message.prototype.id,
+  MessageRelations
 > {
   constructor(
     @inject('datasources.hotel_database') dataSource: DbHotelDataSource,
   ) {
-    super(Hotel, dataSource);
+    super(Message, dataSource);
   }
 }
